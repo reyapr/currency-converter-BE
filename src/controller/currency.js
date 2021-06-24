@@ -10,6 +10,13 @@ const task = cron.schedule(process.env.CURRENCY_CRON, () => {
     .then(response => currencyService.createCurrency(response))
 })
 
+const currenciesResponse = ({originCurrency, destinationCurrency, rate, createdAt }) => ({
+  originCurrency,
+  destinationCurrency,
+  rate,
+  createdAt
+})
+
 module.exports = {
   startCron: (req, res) => {
     task.start()
@@ -23,6 +30,24 @@ module.exports = {
     res.status(200)
       .json({
         message: 'success to stop the task'
+      })
+  },
+  getCurrencies: (req, res) => {
+    currencyService.getCurrenciesByDate(req.query)
+      .then(response => {
+        console.log(`[SUCCES] to get currencies query=${JSON.stringify(req.query)} response=${JSON.stringify(response)}`)
+        res.status(200)
+          .json({
+            message: 'success to get currencies',
+            data: response.map(currenciesResponse)
+          })
+      })
+      .catch(err => {
+        console.log(`failed to get currencies query=${JSON.stringify(req.query)} err=${err}`)
+        res.status(400)
+          .json({
+            message: 'failed to get currencies',
+          })
       })
   }
 }

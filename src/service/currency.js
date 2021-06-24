@@ -1,5 +1,6 @@
-const { response } = require('express');
 const CurrencyRate = require('../model/currency_rate');
+const { epocToISODate } = require('../libraries/date');
+const { Op } = require('sequelize');
 
 const isBaseAmountUnderTargetAmount = (baseAmount, targetAmount) => {
   return baseAmount < targetAmount;
@@ -31,5 +32,16 @@ module.exports = {
     .catch(err => {
       console.log(`[FAILED] failed to save currency rate request=${JSON.stringify(currencyRequest)} err=${err}`)
       throw err;
+    }),
+  getCurrenciesByDate: currencyRequest => {
+    return CurrencyRate.findAll({
+      where: {
+        originCurrency: currencyRequest.origin,
+        destinationCurrency: currencyRequest.destination,
+        createdAt: {
+          [Op.between]: [epocToISODate(currencyRequest.startDate), epocToISODate(currencyRequest.endDate)]
+        }
+      }
     })
+  }
 }
