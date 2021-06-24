@@ -1,4 +1,5 @@
 const cron = require('node-cron');
+const { BusinessLogicException } = require('../libraries/exception');
 const xeOutbound = require('../outbound/xe');
 const currencyService = require('../service/currency');
 
@@ -32,9 +33,16 @@ module.exports = {
         message: 'success to stop the task'
       })
   },
-  getCurrencies: (req, res) => {
+  getCurrencies: (req, res, next) => {
     currencyService.getCurrenciesByDate(req.query)
       .then(response => {
+        if(response.length === 0) {
+          throw new BusinessLogicException({
+            status: 400,
+            message: "Data Not Exist"
+          })
+        }
+        
         console.log(`[SUCCES] to get currencies query=${JSON.stringify(req.query)} response=${JSON.stringify(response)}`)
         res.status(200)
           .json({
@@ -42,12 +50,6 @@ module.exports = {
             data: response.map(currenciesResponse)
           })
       })
-      .catch(err => {
-        console.log(`failed to get currencies query=${JSON.stringify(req.query)} err=${err}`)
-        res.status(400)
-          .json({
-            message: 'failed to get currencies',
-          })
-      })
+      .catch(err => next(err))
   }
 }
