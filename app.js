@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const sequelize = require('./src/config/postgresql');
 const healthCheckRouter = require('./src/routes/index');
+const currencyRouter = require('./src/routes/currency');
 
 const port = process.env.PORT || 3000;
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', healthCheckRouter);
+app.use('/currencies', currencyRouter)
 app.listen(port, () => {
   console.log(`listening on port: ${port}`)
 })

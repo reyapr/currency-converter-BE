@@ -1,3 +1,3 @@
 module.exports = {
-  CURRENCY_RATE = 'currency_rate',
+  CURRENCY_RATE: 'currency_rate',
 }
