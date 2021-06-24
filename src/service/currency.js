@@ -7,19 +7,33 @@ const isBaseAmountUnderTargetAmount = (baseAmount, targetAmount) => {
 }
 
 const constructCurrencies = currencyRequest => {
-  return currencyRequest.to.map(currency => {
+  return currencyRequest.to.flatMap(currency => {
     if(isBaseAmountUnderTargetAmount(currencyRequest.amount, currency.mid)) {
-      return {
-        originCurrency: currencyRequest.from,
-        destinationCurrency: currency.quotecurrency,
-        rate: currency.mid / currencyRequest.amount
-      }
+      return [
+        {
+          originCurrency: currencyRequest.from,
+          destinationCurrency: currency.quotecurrency,
+          rate: currency.mid / currencyRequest.amount
+        },
+        {
+          originCurrency: currency.quotecurrency,
+          destinationCurrency: currencyRequest.from,
+          rate: currency.mid / currencyRequest.amount
+        }
+      ]
     }
-      return {
-        originCurrency: currencyRequest.from,
-        destinationCurrency: currency.quotecurrency,
-        rate: currencyRequest.amount / currency.mid
-      }
+      return [
+        {
+          originCurrency: currencyRequest.from,
+          destinationCurrency: currency.quotecurrency,
+          rate: currencyRequest.amount / currency.mid
+        },
+        {
+          originCurrency: currency.quotecurrency,
+          destinationCurrency: currencyRequest.from,
+          rate: currencyRequest.amount / currency.mid
+        }
+      ]
   })
 }
 
