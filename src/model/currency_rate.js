@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../config/postgresql');
 const { CURRENCY_RATE } = require('../constant/model');
-const Currency = require('./currency');
 
 
 const CurrencyRate = sequelize.define(CURRENCY_RATE, {
@@ -21,7 +20,7 @@ const CurrencyRate = sequelize.define(CURRENCY_RATE, {
       notNull: { msg: "destination currency is required" }
     }
   },
-  rate: DataTypes.NUMBER
+  rate: DataTypes.DECIMAL
 })
 
 CurrencyRate.sync();
