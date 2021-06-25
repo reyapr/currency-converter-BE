@@ -7,34 +7,27 @@ const isBaseAmountUnderTargetAmount = (baseAmount, targetAmount) => {
   return baseAmount < targetAmount;
 }
 
+const getRate = (amount, targetAmount) => {
+  if(isBaseAmountUnderTargetAmount(amount, targetAmount)) {
+    return amount / targetAmount
+  }
+  return targetAmount / amount 
+}
+
 const constructCurrencies = currencyRequest => {
   return currencyRequest.to.flatMap(currency => {
-    if(isBaseAmountUnderTargetAmount(currencyRequest.amount, currency.mid)) {
-      return [
-        {
-          originCurrency: currencyRequest.from,
-          destinationCurrency: currency.quotecurrency,
-          rate: currency.mid / currencyRequest.amount
-        },
-        {
-          originCurrency: currency.quotecurrency,
-          destinationCurrency: currencyRequest.from,
-          rate: currency.mid / currencyRequest.amount
-        }
-      ]
-    }
-      return [
-        {
-          originCurrency: currencyRequest.from,
-          destinationCurrency: currency.quotecurrency,
-          rate: currencyRequest.amount / currency.mid
-        },
-        {
-          originCurrency: currency.quotecurrency,
-          destinationCurrency: currencyRequest.from,
-          rate: currencyRequest.amount / currency.mid
-        }
-      ]
+    return [
+      {
+        originCurrency: currencyRequest.from,
+        destinationCurrency: currency.quotecurrency,
+        rate: getRate(currencyRequest.amount, currency.mid)
+      },
+      {
+        originCurrency: currency.quotecurrency,
+        destinationCurrency: currencyRequest.from,
+        rate: getRate(currencyRequest.amount, currency.mid)
+      }
+    ]
   })
 }
 
@@ -73,6 +66,7 @@ module.exports = {
           currency: response.to[0].quotecurrency,
           amount: response.to[0].mid
         },
+        rate: getRate(response.amount, response.to[0].mid),
         fetchedTime: response.timestamp
       }))
   }

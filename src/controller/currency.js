@@ -1,6 +1,5 @@
 const cron = require('node-cron');
 const { BusinessLogicException } = require('../libraries/exception');
-const xeOutbound = require('../outbound/xe');
 const currencyService = require('../service/currency');
 
 
