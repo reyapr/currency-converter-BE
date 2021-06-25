@@ -69,11 +69,11 @@ module.exports = {
   getCalculatedCurrencies: function(currencyRequest) {
     return this.getCurrenciesFromXe(currencyRequest)
       .then(response => ({
-        origin: {
+        [response.from]: {
           currency: response.from,
           amount: response.amount
         },
-        destination: {
+        [response.to[0].quotecurrency]: {
           currency: response.to[0].quotecurrency,
           amount: response.to[0].mid
         },
