@@ -3,7 +3,7 @@ const { BusinessLogicException } = require('../libraries/exception');
 const currencyService = require('../service/currency');
 
 
-const task = cron.schedule(process.env.CURRENCY_CRON, () => {
+const task = cron.schedule(process.env.CURRENCY_CRON || "*/15 * * * *", () => {
   console.log(`running the task to get currency rate, format_time:${process.env.CURRENCY_CRON}`)
 
   currencyService.getCurrenciesFromXe({from:process.env.XE_FROM, to: process.env.XE_TO})
