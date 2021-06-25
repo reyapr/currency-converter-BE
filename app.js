@@ -8,7 +8,7 @@ const currencyRouter = require('./src/routes/currency');
 const { exceptionHandler } = require('./src/middleware/index')
 const cors = require('cors');
 const corsOptions = {
-  origin: process.env.DNS,
+  origin: 'https://arcane-ocean-52896.herokuapp.com/',
   optionsSuccessStatus: 200
 }
 
