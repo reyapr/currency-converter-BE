@@ -7,7 +7,7 @@ const currencyService = require('../service/currency');
 const task = cron.schedule(process.env.CURRENCY_CRON, () => {
   console.log(`running the task to get currency rate, format_time:${process.env.CURRENCY_CRON}`)
 
-  xeOutbound.getConvertedCurrency(process.env.XE_FROM, process.env.XE_TO)
+  currencyService.getCurrenciesFromXe({from:process.env.XE_FROM, to: process.env.XE_TO})
     .then(response => currencyService.createCurrency(response))
 })
 
@@ -43,11 +43,23 @@ module.exports = {
           })
         }
         
-        console.log(`[SUCCES] to get currencies query=${JSON.stringify(req.query)} response=${JSON.stringify(response)}`)
+        console.log(`[SUCCES] to get currencies request=${JSON.stringify(req.query)} response=${JSON.stringify(response)}`)
         res.status(200)
           .json({
             message: 'success to get currencies',
             data: response.map(currenciesResponse)
+          })
+      })
+      .catch(err => next(err))
+  },
+  getCalculatedCurrencies: (req, res, next) => {
+    currencyService.getCalculatedCurrencies(req.query)
+      .then(response => {
+        console.log(`[SUCCES] to get calculated currencies request=${JSON.stringify(req.query)} response=${JSON.stringify(response)}`)
+        res.status(200)
+          .json({
+            message: 'success to get calculated currencies',
+            data: response
           })
       })
       .catch(err => next(err))

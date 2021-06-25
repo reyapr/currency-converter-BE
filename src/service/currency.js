@@ -1,6 +1,7 @@
 const CurrencyRate = require('../model/currency_rate');
 const { epocToISODate } = require('../libraries/date');
 const { Op } = require('sequelize');
+const xeOutbound = require('../outbound/xe');
 
 const isBaseAmountUnderTargetAmount = (baseAmount, targetAmount) => {
   return baseAmount < targetAmount;
@@ -57,5 +58,22 @@ module.exports = {
         }
       }
     })
+  },
+  getCurrenciesFromXe: currencyRequest => {
+    return xeOutbound.getConvertedCurrency(currencyRequest.from, currencyRequest.to, currencyRequest.amount)
+  },
+  getCalculatedCurrencies: function(currencyRequest) {
+    return this.getCurrenciesFromXe(currencyRequest)
+      .then(response => ({
+        origin: {
+          currency: response.from,
+          amount: response.amount
+        },
+        destination: {
+          currency: response.to[0].quotecurrency,
+          amount: response.to[0].mid
+        },
+        fetchedTime: response.timestamp
+      }))
   }
 }
