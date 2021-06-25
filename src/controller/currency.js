@@ -20,6 +20,7 @@ const currenciesResponse = ({originCurrency, destinationCurrency, rate, createdA
 module.exports = {
   startCron: (req, res) => {
     task.start()
+
     res.status(200)
       .json({
         message: 'success to run the task'
@@ -27,6 +28,9 @@ module.exports = {
   },
   stopCron: (req, res) => {
     task.stop()
+        
+    currencyService.getCurrenciesFromXe({from:process.env.XE_FROM, to: process.env.XE_TO})
+    .then(response => currencyService.createCurrency(response))
     res.status(200)
       .json({
         message: 'success to stop the task'

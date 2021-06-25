@@ -14,6 +14,16 @@ const getRate = (amount, targetAmount) => {
   return targetAmount / amount 
 }
 
+getCurrenciesBetweenTarget = (currencies, currency) => {
+  return currencies
+    .filter(anotherTargetCurrency => anotherTargetCurrency.quotecurrency !== currency.quotecurrency)
+    .map(anotherTargetCurrency => ({
+      originCurrency: currency.quotecurrency,
+      destinationCurrency: anotherTargetCurrency.quotecurrency,
+      rate: getRate(currency.mid, anotherTargetCurrency.mid)
+    }))
+}
+
 const constructCurrencies = currencyRequest => {
   return currencyRequest.to.flatMap(currency => {
     return [
@@ -26,7 +36,8 @@ const constructCurrencies = currencyRequest => {
         originCurrency: currency.quotecurrency,
         destinationCurrency: currencyRequest.from,
         rate: getRate(currencyRequest.amount, currency.mid)
-      }
+      },
+      ...getCurrenciesBetweenTarget(currencyRequest.to, currency)
     ]
   })
 }
