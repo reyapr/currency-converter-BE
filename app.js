@@ -7,11 +7,6 @@ const healthCheckRouter = require('./src/routes/index');
 const currencyRouter = require('./src/routes/currency');
 const { exceptionHandler } = require('./src/middleware/index')
 const cors = require('cors');
-const corsOptions = {
-  origin: 'https://arcane-ocean-52896.herokuapp.com/',
-  optionsSuccessStatus: 200
-}
-
 
 const port = process.env.PORT || 3000;
 
@@ -26,8 +21,7 @@ sequelize.authenticate()
 
 var app = express();
 
-app.use(cors(corsOptions));
-app.options('*', cors());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
