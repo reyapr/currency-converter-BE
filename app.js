@@ -6,6 +6,12 @@ const sequelize = require('./src/config/postgresql');
 const healthCheckRouter = require('./src/routes/index');
 const currencyRouter = require('./src/routes/currency');
 const { exceptionHandler } = require('./src/middleware/index')
+const cors = require('cors');
+const corsOptions = {
+  origin: process.env.DNS,
+  optionsSuccessStatus: 200
+}
+
 
 const port = process.env.PORT || 3000;
 
@@ -20,6 +26,8 @@ sequelize.authenticate()
 
 var app = express();
 
+app.use(cors(corsOptions));
+app.options('*', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
